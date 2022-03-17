@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %} Blogpost{% endblock title %}
+{% block body %}
+{% load humanize %}
+{% load extras %}
+<div class="container my-3">
+    <h2 class="blog-post-title">{{post.title|safe}}</h2>
+    <p class="blog-post-meta">{{post.timeStamp}} by <a href="/about">{{post.author}}</a></p>
+    <p>{{post.content|safe}}</p>
+
+    <hr>
+</div>
+{% if isfeatured %}
+<div class="container">
+    <h3> Comments ({{comments.count}})</h3>
+    <div class="my-2">
+        {% if user.is_authenticated %}
+        <form action="/blog/postComment" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="exampleInputEmail1" class="my-1">Post Comment </label>
+                <input type="text" class="form-control" name="comment" placeholder="Enter comment here">
+            </div>
+            <input type="hidden" name="postSno" value="{{post.sno}}">
+            <input type="hidden" name="parentSno" value="">
+            <button type="submit" class="btn btn-primary my-3">Submit</button>
+        </form>
+        {% else %}
+        <p>Please Login to post comment</p>
+        {% endif %}
+    </div>
+
+        
+    {% for comment in comments %}
+    <div class="row my-3">
+        <div class="col-md-1  ">
+        {% load static %}
+        <img class="rounded mx-auto d-block w-100 p-2" style="border:2px;border-radius:23px;padding:72px" src="{% static 'Images/user.png' %}"  alt="user">
+        </div>
+        <div class="col-md-11 "> 
+        <b> {{comment.user.username}} </b> at {{comment.timestamp|naturaltime}}
+        <div>   {{comment.comment}} </div>
+        <div style="min-height: 120px;">
+            {% if user.is_authenticated %}
+            <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample{{comment.sno}}" aria-expanded="false" aria-controls="collapseWidthExample{{comment.sno}}">
+                Reply
+            </button>
+            {% else %}
+            <button class="btn btn-sm btn-primary" disabled type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample{{comment.sno}}" aria-expanded="false" aria-controls="collapseWidthExample{{comment.sno}}">
+                Login to reply
+            </button>
+            {% endif %}
+            {% if user.is_authenticated %}
+            <div class="collapse collapse-horizontal" id="collapseWidthExample{{comment.sno}}">
+              <div class="card card-body" style="background-color: #DBF9FC;border:none;">
+                <form action="/blog/postComment" method="post" >
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="exampleInputEmail1" class="my-1">Post Reply</label>
+                        <input type="text" class="form-control" name="comment" placeholder="Enter comment here">
+                        <input type="hidden" name="parentSno" value="{{comment.sno}}">
+                    </div>
+                    <input type="hidden" name="postSno" value="{{post.sno}}">
+                    <button type="submit" class="btn btn-primary my-3">Submit</button>
+                </form>
+              </div>
+            </div>
+            {% endif %} 
+            <div class="replies">
+                {% for reply in replyDict|get_val:comment.sno%}
+                <div class="row my-2">
+                    <div class="col-md-1 ">
+                        <img class="rounded mx-auto d-block w-100 p-2" style="border:2px;border-radius:23px;padding:72px" src="/static/Images/user.png" alt="user">
+                    </div>
+                    <div class="col-md-11">
+                        <div class="col-md-11 ">
+                            <b> {{reply.user.username}} </b> <span class=" ">{{reply.timestamp| naturaltime}}</span>
+                            <div>{{reply.comment}}</div>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+          </div>
+    </div>
+    
+    
+    {% endfor %}
+
+    
+</div>
+{% endif %}
+{% endblock %}

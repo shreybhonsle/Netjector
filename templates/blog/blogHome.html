@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Blog{% endblock title %}
+{% block blogactive %} active {% endblock blogactive %}
+
+
+
+{% block body %}
+<div class="container my-3" >
+    <div class="p-4 p-md-5 mb-4 text-white rounded bg-dark ">
+    <div class="col-md px-0 ">
+        <h1 class="display-4 ">Top post this month: {{topPost.title}}</h1>
+        <h3 class="mb-0">by {{topPost.author}}</h3>
+        <h5 class="mb-0 my-2"> by {{topPost.content}}</h5>
+        <p class="lead mb-0 my-2"><a href="/blog/{{topPost.slug}}" class="text-white fw-bold ">Continue reading...</a></p>
+    </div>  
+    </div>
+
+    <div class="row mb-2">
+        {% for post in featured %}
+        <div class="col-md-6">
+            <div class="row g-0 border text-white rounded bg-dark overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+            <div class="col p-4 d-flex flex-column position-static">
+                <strong class="d-inline-block mb-2 text-primary">Featured Articles</strong>
+                <h3 class="mb-0">{{post.title}}</h3>
+                <h5 class="mb-0"> by {{post.author}}</h5>
+                <div class="mb-1 text-muted">{{post.datetime}}</div>
+                <p class="card-text mb-auto"><div class="preview">{{post.content|safe| truncatechars:300}}</div></p>
+                <a href="/blog/{{post.slug}}" class="stretched-link">Continue reading</a>
+            </div>
+            <div class="col-auto d-none d-lg-block">
+                
+    
+            </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <br>
+    <br>
+    <h3 class ="mx-5 ">Recent Blogs</h3>
+    <div class="row mb-2 mx-5">
+        {% for post in allpost %}
+        <div class="col-md-12 ">
+            <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative text-white rounded bg-dark">
+            <div class="col p-4 d-flex flex-column position-static">
+                <h3 class="mb-0">{{post.title}}</h3>
+                <h5 class="mb-0"> by {{post.author}}</h5>
+                <div class="mb-1 text-muted">{{post.datetime}}</div>
+                <p class="card-text mb-auto"><div class="preview">{{post.content| truncatechars:300}}</div></p>
+                <a href="/blog/{{post.slug}}" class="stretched-link">Continue reading</a>
+            </div>
+            <div class="col-auto d-none d-lg-block">
+                
+    
+            </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+
+</div>
+
+{% endblock body %}
+<script>
+    let previews=document.getElementsByClassName('preview');
+    Array.from(previews).forEach((element))=>{
+        element.innerHTML=element.innerText;
+    }
+
+    </script>
